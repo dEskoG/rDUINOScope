@@ -3,7 +3,7 @@ rDUINOScope - Arduino based telescope control system (GOTO)
 
 Published under GNU General Public License
 
-Instructions on how to build it can be found on the project's website: http://rduinoscope.co.nf/
+Instructions on how to build hardware can be found on the project's website: http://rduinoscope.co.nf/
 
 
 rDUINO SCOPE is Arduino Due based Telescope control system (a.k.a. GoTo). Basically it have a database with stellar objects, calculates their position on the sky and point's the telescope. Once the object is in the eyepiece, the system keeps tracking the object. 
