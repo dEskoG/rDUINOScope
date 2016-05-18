@@ -1,5 +1,6 @@
 # rDUINOScope
 rDUINOScope - Arduino based telescope control system (GOTO)
+
 Instructions on how to build it can be found on the project's website: http://rduinoscope.co.nf/
 
 
