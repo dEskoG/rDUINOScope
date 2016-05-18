@@ -5,6 +5,8 @@ Published under GNU General Public License
 
 Instructions on how to build hardware can be found on the project's website: http://rduinoscope.co.nf/
 
+Facebook: https://www.facebook.com/rDUINOScope/
+
 
 rDUINO SCOPE is Arduino Due based Telescope control system (a.k.a. GoTo). Basically it have a database with stellar objects, calculates their position on the sky and point's the telescope. Once the object is in the eyepiece, the system keeps tracking the object. 
 
@@ -25,4 +27,7 @@ SENSORS:
 - Bluetooth module HC-05 – Used to assure communication with Cell Phone/ Tablet. 
 
 - Stepper motor drivers DRV8825 – A stepper drivers allowing up to 2A per coil and utilizing 1/2, 1/4, 1/8, 1/16, 1/32 micro Steps. The mode of operation is selected based on the setup you have (mount parameters) and on the XLS file with calculations. Please, use the file to calculate your values and edit the code accordingly.
+
+
+
 
