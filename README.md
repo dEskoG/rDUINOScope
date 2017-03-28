@@ -2,18 +2,18 @@
 ===========================================================
 rDUINOScope - Arduino based telescope control system (GOTO)
 
+rDUINO SCOPE is Arduino Due based Telescope control system (a.k.a. GoTo). Basically it have a database with stellar objects, calculates their position on the sky and point's the telescope. Once the object is in the eyepiece, the system keeps tracking the object.
+
+The system works with stepper motors of all types and even works with the some commercially available products like SkyWatcher, MEADE, Orion, Vixen and etc.
+
+rDUINO Scope utilizes the code and few sensors in order to collect needed data to control the telescope mount. As an output the rDUINO Scope controls 2 stepper motors representing RA and DEC movement of a German Equatorial Mount (GEM). The system only works with GEM and cannot control Alt/Az or Dobsonian mounts unless you add some code.
+
 Published under GNU General Public License
 
 Instructions on how to build hardware can be found on the project's website: http://rduinoscope.co.nf/
 
 Facebook: https://www.facebook.com/rDUINOScope/
 
-
-rDUINO SCOPE is Arduino Due based Telescope control system (a.k.a. GoTo). Basically it have a database with stellar objects, calculates their position on the sky and point's the telescope. Once the object is in the eyepiece, the system keeps tracking the object.
-
-The system works with stepper motors of all types and even works with the some commercially available products like SkyWatcher, MEADE, Orion, Vixen and etc.
-
-rDUINO Scope utilizes the code and few sensors in order to collect needed data to control the telescope mount. As an output the rDUINO Scope controls 2 stepper motors representing RA and DEC movement of a German Equatorial Mount (GEM). The system only works with GEM and cannot control Alt/Az or Dobsonian mounts unless you add some code.
 
 
 #rDUINOScope v2.1 Boiana EQ 
