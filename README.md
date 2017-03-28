@@ -41,9 +41,13 @@ New features added in v2.1:
 - Added Bluetooth connection with PC;
 - Code has been refactored for easy reading/editing;
 - Bug fixes:
+	
 	o Wrong DEC movement for negative DEC values;
+	
 	o Revised RA movement formula;
+	
 	o OnScreen messages have been fixed;
+	
 	o 1px. Buttons move after press event was fixed;
 
 
