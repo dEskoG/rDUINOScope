@@ -1,12 +1,10 @@
 #rDUINOScope
-
+===========================================================
 rDUINOScope - Arduino based telescope control system (GOTO)
-
 Published under GNU General Public License
-
 Instructions on how to build hardware can be found on the project's website: http://rduinoscope.co.nf/
-
 Facebook: https://www.facebook.com/rDUINOScope/
+
 
 rDUINO SCOPE is Arduino Due based Telescope control system (a.k.a. GoTo). Basically it have a database with stellar objects, calculates their position on the sky and point's the telescope. Once the object is in the eyepiece, the system keeps tracking the object.
 
@@ -47,7 +45,9 @@ New features added in v2.1:
 
 
 
-SENSORS:
+
+ABOUT SENSORS USED:
+===========================================================
 
 RTC DS3231 – Real-Time clock to hold the current date and time even when the system is not powered. The RTC DS3231 is a very accurate clock ±2 ppm - ±3.5 ppm, depending on the temperature, which creates variation of around ±2 min/year. I’m using the sensor in order to keep the time and later on calculate the time zone when calculating LST. (data: PDF);
 
