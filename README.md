@@ -19,9 +19,10 @@ Facebook: https://www.facebook.com/rDUINOScope/
 #rDUINOScope v2.1 Boiana EQ 
 ===========================================================
 Release date: 28 March 2017
-Status: official BETA
-Author: Dessislav Gouzgounov (deskog@gmail.com)
 
+Status: official BETA
+
+<i>This release is dedicated to my daughter Boiana Gouzgounova, who have a special day today 28 March 2017!</i>
 
 This is the final release of the rDUINOScope software for Equatorial Mounts. There is a “jump” in versioning after latest V.1.8, because small improvements have been made for the past year, but those were never released to the general public, thus V.2.1 is a cumulative release.
 
