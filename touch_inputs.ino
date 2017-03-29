@@ -301,7 +301,7 @@ void considerTouchInput(int lx, int ly){
                   }
                   UpdateObservedObjects();
                   MESS_PAGER == 0;
-                  //drawMainScreen();
+                  drawMainScreen();
                 }
               }
             }
@@ -332,7 +332,7 @@ void considerTouchInput(int lx, int ly){
                   }
                   UpdateObservedObjects();
                   TREAS_PAGER == 0;
-                  //drawMainScreen();
+                  drawMainScreen();
                 }
               }
             }
