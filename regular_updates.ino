@@ -233,17 +233,7 @@ void considerTimeUpdates(){   // UPDATEs time on Screen1 && Screen4 -  Clock Scr
             tft.print("delta_DEC: ");
             tft.println(delta_a_DEC, 6);
             
-        }else{             //  ALLIGN_STEP = 2; It is the 2 Star or Iterative Alignment... I need to diplay more data
-            tft.print("err_ALT: ");
-            tft.print(err_ALT,2);
-            tft.println("'");
-            tft.print("err_AZ: ");
-            tft.print(err_AZ,2);
-            tft.println("'");
-            tft.println("");
-            tft.print("ALLIGN_STEP: ");
-            tft.print(ALLIGN_STEP);
-          }
+        }
         tft.setTextSize(2);           // To make sure that when a button is Pressed, it will be re-drawn sith Size 2 text!
         update_time = millis();
   }
