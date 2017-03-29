@@ -142,7 +142,7 @@ void considerTouchInput(int lx, int ly){
           drawStarSyncScreen();
        }else if (lx > 20 && lx < 200 && ly > 170 && ly < 225){
          // BTN "Iterative Alignment" pressed
-          DrawButton(20,240,200,55, "Iterative Align", btn_l_border, 0, btn_l_text, 2);
+          DrawButton(20,170,200,55, "Iterative Align", btn_l_border, 0, btn_l_text, 2);
           ALLIGN_TYPE = 3;
           
           // I'll take some time to Initialize the Sub ARRAY with suitable stars (only for Northern Hemi)
@@ -675,4 +675,3 @@ void considerTouchInput(int lx, int ly){
     }
   }
 }
-
