@@ -11,6 +11,7 @@ rDUINO Scope utilizes the code and few sensors in order to collect needed data t
 Published under GNU General Public License
 
 Instructions on how to build hardware can be found on the project's website: http://rduinoscope.co.nf/
+Mirror website: http://rduinoscope.byethost24.com/
 
 Facebook: https://www.facebook.com/rDUINOScope/
 
