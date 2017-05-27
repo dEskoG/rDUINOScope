@@ -23,25 +23,25 @@
 void considerBTCommands(){
       SoundOn(note_c,8);
 
-      if (BT_COMMAND_STR.indexOf("RD_priv")>0){
+      if (BT_COMMAND_STR=="RD_priv"){
         Current_RA_DEC();
         Serial3.print("Hour Angle: ");
         Serial3.println(curr_RA_lz);
         Serial3.print("Declination: ");
         Serial3.print(curr_DEC_lz);
       }
-      if (BT_COMMAND_STR.indexOf("GR")>0){
+      if (BT_COMMAND_STR=="GR"){
         Current_RA_DEC();
         Serial3.print(curr_RA_lz);
         Serial3.print("#");
       }
-      if (BT_COMMAND_STR.indexOf("GD")>0){
+      if (BT_COMMAND_STR=="GD"){
         Current_RA_DEC();
         Serial3.print(curr_DEC_lz);
         Serial3.print("#");
       }
-     // #:Q#:Sr 07:08:52#
-      if (BT_COMMAND_STR.indexOf(":Sr")>0){
+     // :Sr 07:08:52#
+      if (BT_COMMAND_STR.indexOf("Sr")>0){
         // LX200 - RA Coordinates ()
         int i = BT_COMMAND_STR.indexOf("Sr");
         String _RA = BT_COMMAND_STR.substring(i+3,BT_COMMAND_STR.length()-1);
@@ -53,7 +53,7 @@ void considerBTCommands(){
         Serial3.print("1");
       }
      // :Sd +18Я12:30#
-      if (BT_COMMAND_STR.indexOf(":Sd")>0){
+      if (BT_COMMAND_STR.indexOf("Sd")>0){
         // LX200 - DEC Coordinates ()
         int i = BT_COMMAND_STR.indexOf("Sd");
         String _DEC = BT_COMMAND_STR.substring(i+3,BT_COMMAND_STR.length()-1);
@@ -65,7 +65,7 @@ void considerBTCommands(){
         Serial3.print("1");
       }
       // :MS#
-      if (BT_COMMAND_STR.indexOf(":MS#")>0){
+      if (BT_COMMAND_STR==":MS"){
            // LX200 - Slew To (previously sent coordinates with Sr & Sd)
 
            // Now SlewTo the selected object and draw information on mainScreen
@@ -93,7 +93,7 @@ void considerBTCommands(){
             }
            drawMainScreen();
       }
-      if (BT_COMMAND_STR.indexOf("Current")>0){
+      if (BT_COMMAND_STR=="Current"){
             Serial3.println("MECHANICS DATA (Software Defined):");
             Serial3.println("==================================");
             Serial3.print("MicroSteps for 360 rotation = ");
@@ -201,7 +201,7 @@ void considerBTCommands(){
             }
            drawMainScreen();
         }
-        if (BT_COMMAND_STR.indexOf("Status")>0){
+        if (BT_COMMAND_STR=="Status"){
            double st;
            int st_h;
            int st_m;
@@ -213,9 +213,12 @@ void considerBTCommands(){
            st_h = int(st/60);
            st_m = ((st/60) - st_h)*60;
 
+          // Draw initial screen - INITIALIZE
+          // The below part cannot be removed form the code
+          // You can add messages, but not remove!
            Serial3.println("rDUINO SCOPE - TELESCOPE GOTO System");  
            Serial3.println("Copyright (C) 2016 Dessislav Gouzgounov");
-           Serial3.println("Download for free @ http://rduinoscope.co.nf\r\n");
+           Serial3.println("Download for free @ http://rduinoscope.byethost24.com\r\n");
            Serial3.print("Observing Sesssion started on ");  
            Serial3.print(Start_date);
            Serial3.print(" @");
@@ -278,4 +281,3 @@ void considerBTCommands(){
     BT_COMMAND_STR = "";
     Serial3.flush();
 }
-
