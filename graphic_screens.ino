@@ -6,7 +6,7 @@
 //    the Free Software Foundation, either version 3 of the License, or
 //    any later version.
 //
-//    PROJECT Website: http://rduinoscope.co.nf/
+//    PROJECT Website: http://rduinoscope.byethost24.com
 //
 //    This program is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -746,4 +746,3 @@ void drawSelectAlignment(){
   }
   DrawButton(20,320,200,45, "Skip Alignment", 0, btn_l_border, btn_l_text, 2);
 }
-
