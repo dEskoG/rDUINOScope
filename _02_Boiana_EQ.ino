@@ -404,6 +404,7 @@ int RA_finish_last = 0;
 String old_t, old_d;
 String Start_date;
 int update_time, Tupdate_time;
+long UPD_T;
 int w_DateTime[12]={0,0,0,0,0,0,0,0,0,0,0,0};  // array to store date - as updated from updater screen - Wishing_Date
 int dateEntryPos = 0;
 int Summer_Time = 0;
@@ -513,17 +514,25 @@ void setup(void) {
   considerDayNightMode();
 
   // Draw initial screen - INITIALIZE
+  // The below part cannot be removed form the code
+  // You can add messages, but not remove!
   tft.setTextColor(title_bg);    
   tft.setTextSize(3);
   tft.println("rDUINO Scope");
   tft.setTextColor(l_text);    
   tft.setTextSize(2);
-  tft.setCursor(35, 35);
+  tft.setCursor(20, 35);
   tft.setTextColor(l_text);    
-  tft.println("rduinoscope.co.nf");
-  tft.setCursor(0, 100);
-  tft.setTextColor(d_text);    
+  tft.print("coded by <dEskoG>");
+  tft.setCursor(0, 50);
+  tft.print("Dessislav Gouzgounov");
+  tft.setCursor(30, 70);
   tft.setTextSize(1);
+  tft.print("rduinoscope.byethost24.com");
+  tft.setCursor(30, 80);
+  tft.setTextColor(d_text);    
+  tft.println("GNU General Public License");
+  tft.setCursor(0, 100);
 
   // EMPIRIAL MARCH   :)
   SoundOn(note_f, 48);
@@ -630,28 +639,29 @@ void setup(void) {
   delay(1000);
   CURRENT_SCREEN = 0;
   drawGPSScreen();
-
+  UPD_T = millis();
 }
 
 void loop(void) {
-  uint8_t flag;
-  int tx, ty;
-  
-  p=touch.getpos(&flag);
-  tx=(p.x- 310)/14;
-  ty=(p.y- 150)/9;
   
   calculateLST_HA();
   cosiderSlewTo();
-  
-  if (IS_OBJ_FOUND == true){    // Only doing this to prevent Interruptions when Motor SLEWs to point...
-      if (IS_BT_MODE_ON == true){
-          BT_COMMAND_STR = "";
-          if (Serial3.available()){
-              BT_COMMAND_STR = Serial3.readString();
-              considerBTCommands();
-          }
+
+  // The below part of the code makes sure that the system does NOT process any other inputs while SlweingTo!
+  // Since both motors need every STEP to come from Arduino board, it needs it's entire power to run the motors in fastest possible way
+  // The fastes possible from this board in the current state of the software is approx 3 rotations/sec.
+  // IS_OBJ_FOUND == true --> Means that SLEW command have completed
+  //
+  if (IS_OBJ_FOUND == true){    
+
+      // BLUETOOTH Considerations ? ... if any
+      if ((IS_BT_MODE_ON == true)&&(Serial3.available()>0)){
+           BT_COMMAND_STR = Serial3.readStringUntil('#');
+           considerBTCommands();
       }
+
+
+      // JOYSTICK Movements ? ... if any
       xPosition = analogRead(xPin);
       yPosition = analogRead(yPin);
       if ((xPosition < 500) || (xPosition > 800) || (yPosition < 500) || (yPosition > 800)){
@@ -661,16 +671,29 @@ void loop(void) {
       }else{
         IS_MANUAL_MOVE = false;
       }
+
+      // TOUCH SCREEN Inputs ? ... if any
+      uint8_t flag;
+      int tx, ty;
+      p=touch.getpos(&flag);
+      tx=(p.x- 310)/14;
+      ty=(p.y- 150)/9;
       considerTouchInput(tx, ty);
-      considerTimeUpdates();
-      considerDayNightMode();
-      considerTempUpdates();
-      // I need to make sure the Drives are not moved to track the stars,
-      // if Object is below horizon ALT < 0 - Stop tracking.
-      if ((ALT <= 0) && (IS_TRACKING==true) && (IS_IN_OPERATION == true)){
-        IS_TRACKING = false;
-        Timer3.stop();
-        drawMainScreen();
+
+      // OTHER UPDATES ?  ... if any
+      // Happens every 2 seconds
+      if ((millis()- UPD_T) > 2000){
+        considerTimeUpdates();
+        considerDayNightMode();
+        considerTempUpdates();
+        // I need to make sure the Drives are not moved to track the stars,
+        // if Object is below horizon ALT < 0 - Stop tracking.
+        if ((ALT <= 0) && (IS_TRACKING==true) && (IS_IN_OPERATION == true)){
+            IS_TRACKING = false;
+            Timer3.stop();
+            drawMainScreen();
+        }
+        UPD_T = millis();
       }
   }
 }
