@@ -532,7 +532,10 @@ void setup(void) {
   tft.setCursor(30, 80);
   tft.setTextColor(d_text);    
   tft.println("GNU General Public License");
-  tft.setCursor(0, 100);
+  tft.setCursor(35, 90);
+  tft.setTextColor(d_text);    
+  tft.println("Version: v2.1 Boiana EQ");
+  tft.setCursor(0, 120);
 
   // EMPIRIAL MARCH   :)
   SoundOn(note_f, 48);
