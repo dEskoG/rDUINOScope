@@ -23,7 +23,7 @@
 //
 
 void considerTempUpdates(){                                 // Temperature && Humidity Updates
-  if (CURRENT_SCREEN == 4 && (millis()-Tupdate_time) > 10000){
+  if (CURRENT_SCREEN == 4 && (millis()-Tupdate_time) > 30000){
        float tHum = dht.readHumidity();
        float tTemp = dht.readTemperature();
        if (isnan(tHum) || isnan(tTemp)) {
@@ -54,7 +54,9 @@ void considerTimeUpdates(){   // UPDATEs time on Screen1 && Screen4 -  Clock Scr
    }
   int mer_flp_sound = HAHour + ((HAMin + MIN_TO_MERIDIAN_FLIP + MIN_SOUND_BEFORE_FLIP)/60);
   if((millis()- update_time) > 10000 && mer_flp_sound >= 24){
+    if (IS_SOUND_ON){
       SoundOn(3830,8);
+    }
   }
   if (CURRENT_SCREEN == 4 && (millis()-update_time) > 10000){
       tft.setTextSize(3);
@@ -83,9 +85,9 @@ void considerTimeUpdates(){   // UPDATEs time on Screen1 && Screen4 -  Clock Scr
       tft.print(":");
       if ((LST - (int)LST)*60 < 10){
         tft.print("0");
-        tft.print((LST - (int)LST)*60, 1);
+        tft.print((LST - (int)LST)*60, 0);
       }else{
-        tft.print((LST - (int)LST)*60, 1);
+        tft.print((LST - (int)LST)*60, 0);
       }
       if ((OBJECT_NAME != "") && (OBJECT_NAME != "CP") && (IS_BT_MODE_ON == false)){
           tft.setCursor(130,259);
@@ -198,13 +200,15 @@ void considerTimeUpdates(){   // UPDATEs time on Screen1 && Screen4 -  Clock Scr
             STP_FWD = LOW;
             STP_BACK = HIGH;
           }
-          SoundOn(note_C,32);
+          if (IS_SOUND_ON){
+            SoundOn(note_C,32);
+          }
           CURRENT_SCREEN = 1;
           // Serial2.end();
           drawClockScreen();
         }
         update_time = millis(); 
-  }else if ((CURRENT_SCREEN == 13) && (IS_OBJ_FOUND == true) && ((millis()-update_time) > 1000)){
+  }else if ((CURRENT_SCREEN == 13) && (IS_OBJ_FOUND == true) && ((millis()-update_time) > 2000)){
        tft.setTextColor(btn_l_text);
        tft.setTextSize(1);
        float HAHh;

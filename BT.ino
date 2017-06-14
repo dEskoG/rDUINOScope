@@ -21,7 +21,9 @@
 //  - Bluetooth communication (both ways);
 //
 void considerBTCommands(){
+  if (IS_SOUND_ON){
       SoundOn(note_c,8);
+  }
 
       if (BT_COMMAND_STR=="RD_priv"){
         Current_RA_DEC();
@@ -29,39 +31,92 @@ void considerBTCommands(){
         Serial3.println(curr_RA_lz);
         Serial3.print("Declination: ");
         Serial3.print(curr_DEC_lz);
+        BT_COMMAND_STR = "";
       }
-      if (BT_COMMAND_STR=="GR"){
+      // :AP#
+      if (BT_COMMAND_STR == ":AP"){
+        if (IS_TRACKING == false){
+          IS_TRACKING = true;
+          if (Tracking_type == 1){  // 1: Sidereal, 2: Solar, 0: Lunar;
+              Timer3.start(Clock_Sidereal);
+          }else if (Tracking_type == 2){
+              Timer3.start(Clock_Solar);
+          }else if (Tracking_type == 0){
+              Timer3.start(Clock_Lunar);            
+          }
+          drawMainScreen();
+        }
+        BT_COMMAND_STR = "";
+      }  
+      // :AL#     
+      if (BT_COMMAND_STR==":AL"){
+        if (IS_TRACKING == true){
+          IS_TRACKING = false;
+          Timer3.stop();
+          drawMainScreen();
+        }
+        BT_COMMAND_STR = "";
+      }       
+      if (BT_COMMAND_STR==":GR"){
         Current_RA_DEC();
         Serial3.print(curr_RA_lz);
         Serial3.print("#");
+        BT_COMMAND_STR = "";
       }
-      if (BT_COMMAND_STR=="GD"){
+      if (BT_COMMAND_STR==":GD"){
         Current_RA_DEC();
         Serial3.print(curr_DEC_lz);
         Serial3.print("#");
+        BT_COMMAND_STR = "";
       }
      // :Sr 07:08:52#
       if (BT_COMMAND_STR.indexOf("Sr")>0){
         // LX200 - RA Coordinates ()
+        
+        BTs += BT_COMMAND_STR + "\r\n";
+
         int i = BT_COMMAND_STR.indexOf("Sr");
-        String _RA = BT_COMMAND_STR.substring(i+3,BT_COMMAND_STR.length()-1);
+        String _RA = BT_COMMAND_STR.substring(i+2,BT_COMMAND_STR.length()-1);
         int k0 = _RA.indexOf(":");
         int k1 = _RA.indexOf(":", k0+1);
         OBJECT_DETAILS = "_RA:" + _RA;
         OBJECT_RA_H = _RA.substring(0,k0).toFloat();
-        OBJECT_RA_M = _RA.substring(k0 + 1,k1).toFloat() + (_RA.substring(k1 + 1,_RA.length()).toFloat() / 60);
+        float RAse = 0;
+        if (_RA.substring(k1 + 1,_RA.length()).length()<2){
+          RAse = _RA.substring(k1 + 1,_RA.length()).toFloat()*10;
+        }else{
+          RAse = _RA.substring(k1 + 1,_RA.length()).toFloat();          
+        }
+        OBJECT_RA_M = _RA.substring(k0 + 1,k1).toFloat() + RAse / 60;
         Serial3.print("1");
       }
      // :Sd +18Я12:30#
       if (BT_COMMAND_STR.indexOf("Sd")>0){
         // LX200 - DEC Coordinates ()
+
+        BTs += BT_COMMAND_STR + "\r\n";
+
         int i = BT_COMMAND_STR.indexOf("Sd");
-        String _DEC = BT_COMMAND_STR.substring(i+3,BT_COMMAND_STR.length()-1);
-        int k0 = _DEC.indexOf(223);
+        String _DEC = BT_COMMAND_STR.substring(i+2,BT_COMMAND_STR.length()-1);
+        int k0=0;
+        if (_DEC.indexOf(223) > 0){
+          k0 = _DEC.indexOf(223);
+        }else{
+          k0 = _DEC.indexOf("*");
+        }
         int k1 = _DEC.indexOf(":");
         OBJECT_DETAILS += ", _DEC:" + _DEC;
         OBJECT_DEC_D = _DEC.substring(0,k0).toFloat();
-        OBJECT_DEC_M = _DEC.substring(k0 + 1,k1).toFloat() + (_DEC.substring(k1 + 1,_DEC.length()).toFloat() / 60);
+        float DECse = 0;
+        if (_DEC.substring(k1 + 1,_DEC.length()).length()<2){
+          DECse = _DEC.substring(k1 + 1,_DEC.length()).toFloat()*10;
+        }else{
+          DECse = _DEC.substring(k1 + 1,_DEC.length()).toFloat();          
+        }
+        OBJECT_DEC_M = _DEC.substring(k0 + 1,k1).toFloat() + DECse / 60;
+        if (OBJECT_DEC_D < 0){
+          OBJECT_DEC_M *= -1;
+        }
         Serial3.print("1");
       }
       // :MS#
@@ -72,17 +127,23 @@ void considerBTCommands(){
            calculateLST_HA();
             if (ALT > 0){
                 Serial3.print("0");   // 0 means that everything is OK
-                SoundOn(note_C,32);
-                delay(200);
-                SoundOn(note_C,32);
-                delay(200);
-                SoundOn(note_C,32);
-                delay(1500);
+                if (IS_SOUND_ON){
+                  SoundOn(note_C,32);
+                  delay(200);
+                  SoundOn(note_C,32);
+                  delay(200);
+                  SoundOn(note_C,32);
+                  delay(1500);
+                }
                 UpdateObservedObjects();
-                OBJECT_NAME = "Stellarium";
-                OBJECT_DESCR = "via Bluetooth";
-                OBJECT_DETAILS = "Missing information for this object! " + OBJECT_DETAILS;
+                OBJECT_NAME = "BlueTooth";
+                OBJECT_DESCR = "using LX200 Protocol";
+                OBJECT_DETAILS = "Missing information about the object! " + OBJECT_DETAILS;
 
+                // Stop Interrupt procedure for tracking.
+                Timer3.stop(); // 
+                IS_TRACKING = false;
+                
                 IS_OBJ_FOUND = false;
                 IS_OBJECT_RA_FOUND = false;
                 IS_OBJECT_DEC_FOUND = false;
@@ -92,6 +153,7 @@ void considerBTCommands(){
                 Serial3.print("1rDUINO Scope: Object Below Horizon! #");
             }
            drawMainScreen();
+           BT_COMMAND_STR = "";
       }
       if (BT_COMMAND_STR=="Current"){
             Serial3.println("MECHANICS DATA (Software Defined):");
@@ -103,7 +165,7 @@ void considerBTCommands(){
             Serial3.print("RA_D_CONST = DEC_D_CONST = ");
             Serial3.println(DEC_D_CONST);
             Serial3.print("Clock_Motor (microSec) = ");
-            Serial3.println(Clock_Motor);
+            Serial3.println(Clock_Sidereal);
             Serial3.print("Meridian Flip (time) = ");
             Serial3.println(mer_flp);
             Serial3.println("\r\nOBJECT DATA (Selected):");
@@ -141,6 +203,8 @@ void considerBTCommands(){
             Serial3.println(delta_a_DEC);
             Serial3.println("\r\nVARIABLE DATA (Software):");
             Serial3.println("==================================");
+            Serial3.print("Firmware Version: ");
+            Serial3.println(FirmwareName + " " + FirmwareNumber);
             Serial3.print("IS_OBJ_VISIBLE: ");
             Serial3.println(IS_OBJ_VISIBLE);
             Serial3.print("IS_IN_OPERATION: ");
@@ -155,7 +219,11 @@ void considerBTCommands(){
             Serial3.println(IS_BT_MODE_ON);
             Serial3.print("CURRENT_SCREEN: "); 
             Serial3.println(CURRENT_SCREEN); 
-            
+            Serial3.println("==================================");
+            Serial3.println("Bluetooth Commands:");
+            Serial3.println(BTs);
+                     
+            BT_COMMAND_STR = "";            
         }
         if (BT_COMMAND_STR.indexOf("SlewTo")>0){
            // Serial.println("SlewTo Command");
@@ -182,17 +250,27 @@ void considerBTCommands(){
            OBJECT_RA_M = BT_COMMAND_STR.substring(i3+1, i4).toFloat();
            OBJECT_DEC_D = BT_COMMAND_STR.substring(i4+1, i5).toFloat();
            OBJECT_DEC_M = BT_COMMAND_STR.substring(i5+1, i6).toFloat();
+           if (OBJECT_DEC_D  < 0){
+             OBJECT_DEC_M *= -1;
+           }
+
            
            // Now SlewTo the selected object and draw information on mainScreen
            calculateLST_HA();
             if (ALT > 0){
-                SoundOn(note_C,32);
-                delay(200);
-                SoundOn(note_C,32);
-                delay(200);
-                SoundOn(note_C,32);
-                delay(1500);
+               if (IS_SOUND_ON){
+                  SoundOn(note_C,32);
+                  delay(200);
+                  SoundOn(note_C,32);
+                  delay(200);
+                  SoundOn(note_C,32);
+                  delay(1500);
+               }
                 UpdateObservedObjects();
+                // Stop Interrupt procedure for tracking.
+                Timer3.stop(); // 
+           
+                IS_TRACKING = false;                
                 IS_OBJ_FOUND = false;
                 IS_OBJECT_RA_FOUND = false;
                 IS_OBJECT_DEC_FOUND = false;
@@ -200,6 +278,7 @@ void considerBTCommands(){
                 Slew_RA_timer = Slew_timer + 20000;   // Give 20 sec. advance to the DEC. We will revise later.
             }
            drawMainScreen();
+           BT_COMMAND_STR = "";
         }
         if (BT_COMMAND_STR=="Status"){
            double st;
@@ -275,9 +354,11 @@ void considerBTCommands(){
               String Composed = "@ "+ ObservedObjects[i].substring(i2+1, i3) + "h, " + ObservedObjects[i].substring(0, i1) + " was observed for " + String(tt) + " min";
               Composed += "\nAt the time of observation the object was "+degs_+"deg. above horizon, with HA:"+ha_+" Environment wise: " + ObservedObjects[i].substring(i3+1, i4) + " C and " + ObservedObjects[i].substring(i4+1, i5) + "% humidity. "+ObservedObjects[i].substring(i1+1, i2)+"\n";
               Serial3.println(Composed);
+              BT_COMMAND_STR = "";
             }
         }  
     // }
     BT_COMMAND_STR = "";
     Serial3.flush();
 }
+

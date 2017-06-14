@@ -197,27 +197,51 @@ void considerTouchInput(int lx, int ly){
       if (lx > 2 && lx < 78 && ly > 282 && ly < 335 && IS_BT_MODE_ON == false){
        // BTN 1 pressed
          tft.fillRect(1,280,78,55, btn_l_border);
-         last_button = 1;
+         if (MAIN_SCREEN_MENU == 0){
+             last_button = 1;
+         }else{
+             last_button = 7;
+         }
       } else if (lx > 2 && lx < 78 && ly > 341 && ly < 400 && IS_BT_MODE_ON == false){
        // BTN 4 pressed
          tft.fillRect(1,339,78,55, btn_l_border);
-         last_button = 4;
+         if (MAIN_SCREEN_MENU == 0){
+             last_button = 4;
+         }else{
+             last_button = 10;
+         }
       } else if (lx > 83 && lx < 148 && ly > 280 && ly < 335 && IS_BT_MODE_ON == false){
        // BTN 2 pressed
          tft.fillRect(81,280,78,55, btn_l_border);
-         last_button = 2;
-      } else if (lx > 83 && lx < 148 && ly > 341 && ly < 400 && IS_BT_MODE_ON == false){
+         if (MAIN_SCREEN_MENU == 0){
+             last_button = 2;
+         }else{
+             last_button = 8;
+         }
+      } else if (lx > 83 && lx < 148 && ly > 341 && ly < 400){
        // BTN 5 pressed
          tft.fillRect(81,339,78,55, btn_l_border);
-         last_button = 5;
+         if (MAIN_SCREEN_MENU == 0){
+             last_button = 5;
+         }else{
+             last_button = 11;
+         }
       } else if (lx > 163 && lx < 239 && ly > 282 && ly < 335){
        // BTN 3 pressed
          tft.fillRect(161,280,78,55, btn_l_border);
-         last_button = 3;
+         if (MAIN_SCREEN_MENU == 0){
+             last_button = 3;
+         }else{
+             last_button = 9;
+         }
       } else if (lx > 163 && lx < 239 && ly > 341 && ly < 400){
        // BTN 6 pressed
          tft.fillRect(161,339,78,55, btn_l_border);
-         last_button = 6;
+         if (MAIN_SCREEN_MENU == 0){
+             last_button = 6;
+         }else{
+             last_button = 12;
+         }
       }
     }else if (CURRENT_SCREEN == 5){   // captures touches on drawCoordinatesScreen()
        if (lx > 181 && lx < 238 && ly > 5 && ly < 35){
@@ -287,12 +311,18 @@ void considerTouchInput(int lx, int ly){
                   calculateLST_HA();
                   if (ALT > 0){
                      OnScreenMsg(1);
-                     SoundOn(note_C,32);
-                     delay(200);
-                     SoundOn(note_C,32);
-                     delay(200);
-                     SoundOn(note_C,32);
-                     delay(1000);
+                     if (IS_SOUND_ON){
+                       SoundOn(note_C,32);
+                       delay(200);
+                       SoundOn(note_C,32);
+                       delay(200);
+                       SoundOn(note_C,32);
+                       delay(1000);
+                     }
+                     // Stop Interrupt procedure for tracking.
+                      Timer3.stop(); // 
+                      IS_TRACKING = false;
+
                      IS_OBJ_FOUND = false;
                      IS_OBJECT_RA_FOUND = false;
                      IS_OBJECT_DEC_FOUND = false;
@@ -318,12 +348,18 @@ void considerTouchInput(int lx, int ly){
                   calculateLST_HA();
                   if (ALT > 0){
                      OnScreenMsg(1);
-                     SoundOn(note_C,32);
-                     delay(200);
-                     SoundOn(note_C,32);
-                     delay(200);
-                     SoundOn(note_C,32);
-                     delay(1000);
+                     if (IS_SOUND_ON){
+                       SoundOn(note_C,32);
+                       delay(200);
+                       SoundOn(note_C,32);
+                       delay(200);
+                       SoundOn(note_C,32);
+                       delay(1000);
+                     }
+                     // Stop Interrupt procedure for tracking.
+                      Timer3.stop(); // 
+                      IS_TRACKING = false;
+
                      IS_OBJ_FOUND = false;
                      IS_OBJECT_RA_FOUND = false;
                      IS_OBJECT_DEC_FOUND = false;
@@ -338,11 +374,93 @@ void considerTouchInput(int lx, int ly){
             }
          }
        }
-     }else if (CURRENT_SCREEN == 10){   // captures touches on drawSTATScreen()
+     }else if (CURRENT_SCREEN == 7){   // captures touches on drawOptionsScreen()
+       if (lx > 181 && lx < 238 && ly > 5 && ly < 35){
+       // BTN <Back pressed
+         drawMainScreen();
+        }
+       if (lx > 5 && lx < 79 && ly > 70 && ly < 100){
+       // Celestial Tracking Selected
+         Tracking_type = 1;
+         drawOptionsScreen();
+        }
+       if (lx > 83 && lx < 156 && ly > 70 && ly < 100){
+       // Lunar Tracking Selected
+         Tracking_type = 0;
+         drawOptionsScreen();
+        }
+       if (lx > 161 && lx < 234 && ly > 70 && ly < 100){
+       // Solar Tracking Selected
+         Tracking_type = 2;
+         drawOptionsScreen();
+        }
+       if (lx > 5 && lx < 78 && ly > 155 && ly < 185){
+       // ON Meridian Flip
+         IS_MERIDIAN_FLIP_AUTOMATIC = true;
+         drawOptionsScreen();
+        }
+       if (lx > 83 && lx < 156 && ly > 155 && ly < 185){
+       // OFF Meridian Flip
+         IS_MERIDIAN_FLIP_AUTOMATIC = false;
+         drawOptionsScreen();
+        }
+       if (lx > 5 && lx < 78 && ly > 240 && ly < 270){
+       // ON Sound
+         IS_SOUND_ON = true;
+         drawOptionsScreen();
+        }
+       if (lx > 83 && lx < 156 && ly > 240 && ly < 270){
+       // OFF Sound
+         IS_SOUND_ON = false;
+         drawOptionsScreen();
+        }
+        
+    }else if (CURRENT_SCREEN == 10){   // captures touches on drawSTATScreen()
        if (lx > 181 && lx < 238 && ly > 5 && ly < 35){
        // BTN Cancel pressed
          IS_IN_OPERATION = true;
          drawMainScreen();
+        }
+    }else if (CURRENT_SCREEN == 11){   // captures touches on drawStarMap()
+       if (lx > 181 && lx < 238 && ly > 5 && ly < 35){
+       // BTN Cancel pressed
+         IS_IN_OPERATION = true;
+         drawMainScreen();
+        }
+        // Take care of Map move...
+        // When user touches left, right, top and bottom part of the image,
+        // the system loads the corresponding Star Map - moving left, right, top and bottom.
+        if (lx > 0 && lx < 50 && ly > 90 && ly < 350){
+          // Left side touched... show next StarMap image
+          if (map_c < 8){
+            map_c += 1;
+            IS_CUSTOM_MAP_SELECTED = true;
+            drawStarMap();
+          }
+        }
+        if (lx > 190 && lx < 240 && ly > 90 && ly < 350){
+          // Right side touched... show next StarMap image
+          if (map_c > 1){
+            map_c -= 1;
+            IS_CUSTOM_MAP_SELECTED = true;
+            drawStarMap();
+          }
+        }
+        if (lx > 0 && lx < 240 && ly > 40 && ly < 90){
+          // Top side touched... show next StarMap image
+          if (map_r > 1){
+            map_r -= 1;
+            IS_CUSTOM_MAP_SELECTED = true;
+            drawStarMap();
+          }
+        }
+        if (lx > 0 && lx < 240 && ly > 350 && ly < 400){
+          // Bottom side touched... show next StarMap image
+          if (map_r < 3){
+            map_r += 1;
+            IS_CUSTOM_MAP_SELECTED = true;
+            drawStarMap();
+          }
         }
     }else if (CURRENT_SCREEN == 12){    // captures touches on drawStarSyncScreen()
        if (lx > 181 && lx < 238 && ly > 5 && ly < 35){
@@ -389,17 +507,25 @@ void considerTouchInput(int lx, int ly){
                     calculateLST_HA();
                     if (ALT < 0){
                         OnScreenMsg(3);
-                        SoundOn(note_C,96);
-                        delay(2000);
+                        if (IS_SOUND_ON){
+                          SoundOn(note_C,96);
+                          delay(2000);
+                        }
                         drawStarSyncScreen();
                     }else{
                         OnScreenMsg(1);
-                        SoundOn(note_C,32);
-                        delay(200);
-                        SoundOn(note_C,32);
-                        delay(200);
-                        SoundOn(note_C,32);
-                        delay(200);
+                        if (IS_SOUND_ON){
+                          SoundOn(note_C,32);
+                          delay(200);
+                          SoundOn(note_C,32);
+                          delay(200);
+                          SoundOn(note_C,32);
+                          delay(200);
+                        }
+                       // Stop Interrupt procedure for tracking.
+                        Timer3.stop(); // 
+                        IS_TRACKING = false;
+
                         IS_OBJ_FOUND = false;
                         IS_OBJECT_RA_FOUND = false;
                         IS_OBJECT_DEC_FOUND = false;
@@ -431,12 +557,18 @@ void considerTouchInput(int lx, int ly){
                     selectOBJECT_M(Iterative_Star_Index,3);
                     calculateLST_HA();
                     OnScreenMsg(1);
-                    SoundOn(note_C,32);
-                    delay(200);
-                    SoundOn(note_C,32);
-                    delay(200);
-                    SoundOn(note_C,32);
-                    delay(200);
+                    if (IS_SOUND_ON){
+                      SoundOn(note_C,32);
+                      delay(200);
+                      SoundOn(note_C,32);
+                      delay(200);
+                      SoundOn(note_C,32);
+                      delay(200);
+                    }
+                   // Stop Interrupt procedure for tracking.
+                    Timer3.stop(); // 
+                    IS_TRACKING = false;
+
                     IS_OBJ_FOUND = false;
                     IS_OBJECT_RA_FOUND = false;
                     IS_OBJECT_DEC_FOUND = false;
@@ -483,12 +615,18 @@ void considerTouchInput(int lx, int ly){
                 selectOBJECT_M(192,2);  // Polaris in on Index 192 in the Stars Array
                 calculateLST_HA();
                 OnScreenMsg(1);
-                SoundOn(note_C,32);
-                delay(200);
-                SoundOn(note_C,32);
-                delay(200);
-                SoundOn(note_C,32);
-                delay(200);
+                if (IS_SOUND_ON){
+                  SoundOn(note_C,32);
+                  delay(200);
+                  SoundOn(note_C,32);
+                  delay(200);
+                  SoundOn(note_C,32);
+                  delay(200);
+                }
+               // Stop Interrupt procedure for tracking.
+                Timer3.stop(); // 
+                IS_TRACKING = false;
+
                 IS_OBJ_FOUND = false;
                 IS_OBJECT_RA_FOUND = false;
                 IS_OBJECT_DEC_FOUND = false;
@@ -504,12 +642,18 @@ void considerTouchInput(int lx, int ly){
                 selectOBJECT_M(Iterative_Star_Index,3);  // Load First Star from the Stars Array
                 calculateLST_HA();
                     OnScreenMsg(1);
-                    SoundOn(note_C,32);
-                    delay(200);
-                    SoundOn(note_C,32);
-                    delay(200);
-                    SoundOn(note_C,32);
-                    delay(200);
+                    if (IS_SOUND_ON){
+                      SoundOn(note_C,32);
+                      delay(200);
+                      SoundOn(note_C,32);
+                      delay(200);
+                      SoundOn(note_C,32);
+                      delay(200);
+                    }
+               // Stop Interrupt procedure for tracking.
+                Timer3.stop(); // 
+                IS_TRACKING = false;
+
                 IS_OBJ_FOUND = false;
                 IS_OBJECT_RA_FOUND = false;
                 IS_OBJECT_DEC_FOUND = false;
@@ -617,24 +761,20 @@ void considerTouchInput(int lx, int ly){
          drawLoadScreen();
         }
         if (last_button == 4 && IS_BT_MODE_ON == false){
-         last_button = 0;
-         DrawButton( 1, 339, 78, 55, "COORD", btn_l_text, 0, btn_d_text, 2);
-         if (IS_TRACKING == true){
-            SoundOn(note_C,32);
-         }
-         drawCoordinatesScreen();
+          last_button = 0;
+          drawSTATScreen();
         }
         if (last_button == 2 && IS_BT_MODE_ON == false){
          last_button = 0;
-         DrawButton( 81, 280, 78, 55, "HOME", btn_l_text, 0, btn_d_text, 2);
          IS_TRACKING = false;
+         Timer3.stop();
+         DrawButton( 81, 280, 78, 55, "HOME", btn_l_text, 0, btn_d_text, 2);
          OBJECT_NAME = "CP";
          OBJECT_DESCR = "Celestial pole";
          OBJECT_RA_H = 12;
          OBJECT_RA_M = 0;       
          OBJECT_DEC_D = 90;
          OBJECT_DEC_M = 0;
-         delay(1000);
          IS_OBJ_FOUND = false;
          IS_OBJECT_RA_FOUND = false;
          IS_OBJECT_DEC_FOUND = false;
@@ -642,10 +782,14 @@ void considerTouchInput(int lx, int ly){
          Slew_RA_timer = Slew_timer + 20000;   // Give 20 sec. advance to the DEC. We will revise later.
          OBJECT_DETAILS="The north and south celestial poles are the two imaginary points in the sky where the Earth's axis of rotation, intersects the celestial sphere";
         }
-        if (last_button == 5 && IS_BT_MODE_ON == false){
-         last_button = 0;
-         DrawButton( 81, 399, 78, 55, "...", btn_l_text, 0, btn_d_text, 2);
-         drawSTATScreen();
+        if ((last_button == 5)||(last_button == 11)){
+          last_button = 0;
+          if (MAIN_SCREEN_MENU == 0){
+            MAIN_SCREEN_MENU = 1;
+          }else{
+            MAIN_SCREEN_MENU = 0;
+          }
+          drawMainScreen_Menu(1);
         }
         if (last_button == 3){
          last_button = 0;
@@ -653,8 +797,14 @@ void considerTouchInput(int lx, int ly){
            IS_TRACKING = true;
            DrawButton( 161, 280, 78, 55, "TRACK", btn_d_border, btn_l_border, btn_l_text, 2);
            setmStepsMode("R",MICROSteps);
-           Timer3.start(Clock_Motor); 
-         }else{
+            if (Tracking_type == 1){  // 1: Sidereal, 2: Solar, 0: Lunar;
+                Timer3.start(Clock_Sidereal);
+            }else if (Tracking_type == 2){
+                Timer3.start(Clock_Solar);
+            }else if (Tracking_type == 0){
+                Timer3.start(Clock_Lunar);            
+            }
+          }else{
            IS_TRACKING = false;
            tft.fillRect(161, 280, 78, 55,BLACK);
            DrawButton( 161, 280, 78, 55, "TRACK", 0, btn_l_border, btn_l_text, 2);
@@ -671,7 +821,53 @@ void considerTouchInput(int lx, int ly){
           }
           last_button = 0;
           drawMainScreen();
-      }
+        }
+        if (last_button == 7 && IS_BT_MODE_ON == false){
+         last_button = 0;
+         //DrawButton( 1, 280, 78, 55, "LOAD", btn_l_text, 0, btn_d_text, 2);
+         if ((IS_TRACKING == true) && (IS_SOUND_ON)){
+            SoundOn(note_C,32);
+         }
+         drawCoordinatesScreen();
+        }
+        if (last_button == 8 && IS_BT_MODE_ON == false){
+         last_button = 0;
+         //DrawButton( 81, 280, 78, 55, "MAP", btn_l_text, 0, btn_d_text, 2);
+         drawStarMap();
+        }
+        if (last_button == 9){
+         last_button = 0;
+         if (IS_DEV1_ON){
+            IS_DEV1_ON = false;
+            tft.fillRect(161, 280, 78, 55,BLACK);
+            DrawButton( 161, 280, 78, 55, "DEV 1", 0, btn_l_border, btn_l_text, 2);
+            digitalWrite(DEV1,LOW);
+         }else{
+            IS_DEV1_ON = true;
+            tft.fillRect(161, 280, 78, 55,BLACK);
+            DrawButton( 161, 280, 78, 55, "DEV 1", btn_d_border, btn_l_border, btn_l_text, 2);
+            digitalWrite(DEV1,HIGH);
+         }
+        }
+        if (last_button == 10){
+          last_button = 0;
+          drawOptionsScreen();
+        }
+        if (last_button == 12){
+         last_button = 0;
+         if (IS_DEV2_ON){
+            IS_DEV2_ON = false;
+            tft.fillRect(161, 339, 78, 55,BLACK);
+            DrawButton( 161, 339, 78, 55, "DEV 2", 0, btn_l_border, btn_l_text, 2);
+            digitalWrite(DEV2,LOW);
+         }else{
+            IS_DEV2_ON = true;
+            tft.fillRect(161, 339, 78, 55,BLACK);
+            DrawButton( 161, 339, 78, 55, "DEV 2", btn_d_border, btn_l_border, btn_l_text, 2);
+            digitalWrite(DEV2,HIGH);
+         }
+        }
     }
   }
 }
+
