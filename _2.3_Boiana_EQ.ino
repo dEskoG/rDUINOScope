@@ -725,7 +725,7 @@ void loop(void) {
  // The delay is only needed when in full speed.... otherways the CalculateLST_HA() takes over and
  // slows down the arduino enought. CalculateLST_HA() when slewing only fires when the motors slows down
  // after they are very close to the Object Position.
- if ((DELAY_Slew + 800 <= micros()) && (IS_OBJ_FOUND == false)){
+ if ((DELAY_Slew + 1000 <= micros()) && (IS_OBJ_FOUND == false)){
   
     // If you wonder how I get to this delay - 800 uS
     // When I optimised the code for speed, the main delay was coming from calculateLST_HA() which back then was calculated on every Loop();
@@ -764,7 +764,6 @@ void loop(void) {
       if ((xPosition < 500) || (xPosition > 800) || (yPosition < 500) || (yPosition > 800)){
         IS_MANUAL_MOVE = true;
         consider_Manual_Move(xPosition, yPosition);
-        // Serial.println("mm!");
       }else{
         IS_MANUAL_MOVE = false;
       }
@@ -1320,6 +1319,7 @@ void consider_Manual_Move(int xP, int yP){
       digitalWrite(DEC_STP,LOW);
       DEC_microSteps -= DEC_mode_steps;
     }
+    delay(1);
 }
 
 // Keep the GPS sensor "fed" until we find the data.
