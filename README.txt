@@ -20,7 +20,7 @@ Facebook: https://www.facebook.com/rDUINOScope/
 #rDUINOScope v2.3.1 Boiana EQ 
 ===========================================================
 Release date: 03 August 2017
-Status: RC
+Status: Stable Version
 Author: Dessislav Gouzgounov / Десислав Гузгнов /(deskog@gmail.com) 
 
 
