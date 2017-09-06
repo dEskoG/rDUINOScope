@@ -17,20 +17,29 @@ HACKADAY.IO Project: https://hackaday.io/project/21024-rduinoscope
 Facebook: https://www.facebook.com/rDUINOScope/
 
 
-#rDUINOScope v2.3 Boiana EQ 
+#rDUINOScope v2.3.1 Boiana EQ 
 ===========================================================
-Release date: 10 June 2017
+Release date: 03 August 2017
 Status: RC
-Author: Dessislav Gouzgounov / ƒÂÒËÒÎ‡‚ √ÛÁ„ÛÌÓ‚ /(deskog@gmail.com) 
+Author: Dessislav Gouzgounov / –î–µ—Å–∏—Å–ª–∞–≤ –ì—É–∑–≥–Ω–æ–≤ /(deskog@gmail.com) 
 
 
-This is the final version of the rDUINOScope software for Equatorial Mounts. There is a ìjumpî in versioning after  V.1.8 and latest v2.1, because small improvements have been made recently, but those were never released to the general public, thus V.2.3 is a cumulative release.
+v2.3.1 aims to bring all existing hardware platforms into one code base. Additionally this version introduces new features to the rDUINOScope like Screensaver, TFT brightness, MosFET to control power to DRV8825 and etc.
 
-PLEASE NOTE: Within v2.1 I promised support for AltAz / Dobsonian mounts. Later in the development I decided to split the code in 2 streams:
-- #rDUINOScope v2.3 Boiana EQ  - Version for German Equatorial Mounts; 
-- #rDUINOScope v2.3 Boiana AltAz ñ Version for AltAz / Dobsonian Mounts;
+Current release will also be used as a base to add the Alt/Az changes.
 
-By the time of this release the AltAz version is ready but not tested, thus it will be released a bit later!
+New features added in v2.3.1:
+===========================================================
+- Brings all existing flavours of the hardware to use same code!
+- Hardware Changes!!! - Plese reffer to the HACKADAY instructions!
+- Screen Brightness control;
+- Screen Auto OFF function with timeout;
+- Implemented FET transistor to control power to the stepper motors;
+- More BlueTooth commands added to prepare for a screenless version (or operation);
+- It is now possible to control rDUINOScope without the TFT screen - so called "BLIND" version.
+- BUG fixes:
+	- GPS fixes;
+	- SlewTo speed issues for low amperage;
 
 
 
@@ -52,8 +61,8 @@ New features added in v2.3:
 
 New features added in v2.1:
 ===========================================================
-- Added ì1 Star Alignmentî Method;
-- Added ìIterative Alignmentî Method;
+- Added ‚Äú1 Star Alignment‚Äù Method;
+- Added ‚ÄúIterative Alignment‚Äù Method;
 - Added 200 brightest stars to be used in alignment procedures;
 - Added Bluetooth control from Stellarium (cloned LX200 communication protocols);
 - Added Bluetooth connection with PC;
