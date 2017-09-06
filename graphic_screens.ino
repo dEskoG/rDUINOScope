@@ -139,7 +139,7 @@ void drawSelectAlignment(){
 
   DrawButton(20,100,200,55, "1 Star Alignment", btn_d_border, btn_l_border, btn_l_text, 2);
 //  DrawButton(20,170,200,55, "2 Star Alignment", btn_d_border, btn_l_border, btn_l_text, 2);
-  if (OBSERVATION_LONGITUDE > 0){
+  if (OBSERVATION_LATTITUDE > 0){
       DrawButton(20,170,200,55, "Iterative Align", btn_d_border, btn_l_border, btn_l_text, 2);
   }
   DrawButton(20,320,200,45, "Skip Alignment", 0, btn_l_border, btn_l_text, 2);
@@ -386,49 +386,104 @@ void drawOptionsScreen(){
   // Draw Options...
 
   // Tracking Mode
-  tft.setCursor(20, 45);
+  tft.setCursor(10, 45);
   tft.setTextColor(btn_l_text);
   tft.setTextSize(2);
   tft.println("Tracking Modes");
    if (Tracking_type == 0){
-      DrawButton(5,70,73,30, "Celest", 0, btn_l_border, btn_l_text, 2);
-      DrawButton(83,70,73,30, "Lunar", btn_d_border, btn_l_border, btn_l_text, 2);
-      DrawButton(161,70,73,30, "Solar", 0, btn_l_border, btn_l_text, 2);
+      DrawButton(5,65,73,30, "Celest", 0, btn_l_border, btn_l_text, 2);
+      DrawButton(83,65,73,30, "Lunar", btn_d_border, btn_l_border, btn_l_text, 2);
+      DrawButton(161,65,73,30, "Solar", 0, btn_l_border, btn_l_text, 2);
    }else if (Tracking_type == 1){
-      DrawButton(5,70,73,30, "Celest", btn_d_border, btn_l_border, btn_l_text, 2);
-      DrawButton(83,70,73,30, "Lunar", 0, btn_l_border, btn_l_text, 2);
-      DrawButton(161,70,73,30, "Solar", 0, btn_l_border, btn_l_text, 2);
+      DrawButton(5,65,73,30, "Celest", btn_d_border, btn_l_border, btn_l_text, 2);
+      DrawButton(83,65,73,30, "Lunar", 0, btn_l_border, btn_l_text, 2);
+      DrawButton(161,65,73,30, "Solar", 0, btn_l_border, btn_l_text, 2);
   }else if (Tracking_type == 2) {
-      DrawButton(5,70,73,30, "Celest", 0, btn_l_border, btn_l_text, 2);
-      DrawButton(83,70,73,30, "Lunar", 0, btn_l_border, btn_l_text, 2);
-      DrawButton(161,70,73,30, "Solar", btn_d_border, btn_l_border, btn_l_text, 2);
+      DrawButton(5,65,73,30, "Celest", 0, btn_l_border, btn_l_text, 2);
+      DrawButton(83,65,73,30, "Lunar", 0, btn_l_border, btn_l_text, 2);
+      DrawButton(161,65,73,30, "Solar", btn_d_border, btn_l_border, btn_l_text, 2);
   }
 
   //tft.drawLine (5, 110, 235, 110, btn_l_text);
 
-  // Auto Meridian Flip
-  tft.setCursor(20, 130);
-  tft.println("Auto Meridian Flip");
-  if (IS_MERIDIAN_FLIP_AUTOMATIC){
-      DrawButton(5,155,73,30, "ON", btn_d_border, btn_l_border, btn_l_text, 2);
-      DrawButton(83,155,73,30, "OFF", 0, btn_l_border, btn_l_text, 2);
-  }else{
-      DrawButton(5,155,73,30, "ON", 0, btn_l_border, btn_l_text, 2);
-      DrawButton(83,155,73,30, "OFF", btn_d_border, btn_l_border, btn_l_text, 2);    
-  }
+  // Screen Brightnes
+  tft.setCursor(10, 105);
+  tft.println("Screen Brightnes");
+  DrawButton(200,125,35,30, "MAX", 0, btn_l_border, btn_l_text, 1);
+  tft.fillTriangle(5,152,194,152,194,129,btn_d_border);
 
- //tft.drawLine (5, 195, 235, 195, btn_l_text);
+  // Screen Brightnes
+  tft.setCursor(10, 165);
+  tft.setTextSize(2);
+  tft.print("Screen Auto Off");
+//  tft.setCursor(105, 170);
+//  tft.setTextSize(1);
+//  tft.println(" (in seconds)");
+  if (TFT_timeout == 0){
+    DrawButton(5,185,40,30, "NEVER", btn_d_border, btn_l_border, btn_l_text, 1);
+  }else{
+    DrawButton(5,185,40,30, "NEVER", 0, btn_l_border, btn_l_text, 1);    
+  }
+  if (TFT_timeout == 30000){
+    DrawButton(48,185,35,30, "30s", btn_d_border, btn_l_border, btn_l_text, 1);
+  }else{
+    DrawButton(48,185,35,30, "30s", 0, btn_l_border, btn_l_text, 1);
+  }
+  if (TFT_timeout == 60000){
+    DrawButton(86,185,35,30, "60s", btn_d_border, btn_l_border, btn_l_text, 1);
+  }else{
+    DrawButton(86,185,35,30, "60s", 0, btn_l_border, btn_l_text, 1);
+  }
+  if (TFT_timeout == 120000){
+    DrawButton(124,185,35,30, "2m", btn_d_border, btn_l_border, btn_l_text, 1);
+  }else{
+    DrawButton(124,185,35,30, "2m", 0, btn_l_border, btn_l_text, 1);
+  }
+  if (TFT_timeout == 300000){
+    DrawButton(162,185,35,30, "5m", btn_d_border, btn_l_border, btn_l_text, 1);
+  }else{
+    DrawButton(162,185,35,30, "5m", 0, btn_l_border, btn_l_text, 1);
+  }
+  if (TFT_timeout == 600000){
+    DrawButton(200,185,35,30, "10m", btn_d_border, btn_l_border, btn_l_text, 1);
+  }else{
+    DrawButton(200,185,35,30, "10m", 0, btn_l_border, btn_l_text, 1);
+  }
+  // Auto Meridian Flip
+  tft.setCursor(10, 225);
+  tft.setTextSize(2);
+  tft.println("Meridian Flip");
+  if (IS_MERIDIAN_FLIP_AUTOMATIC){
+      DrawButton(5,245,73,30, "AUTO", btn_d_border, btn_l_border, btn_l_text, 2);
+      DrawButton(83,245,73,30, "OFF", 0, btn_l_border, btn_l_text, 2);
+  }else{
+      DrawButton(5,245,73,30, "AUTO", 0, btn_l_border, btn_l_text, 2);
+      DrawButton(83,245,73,30, "OFF", btn_d_border, btn_l_border, btn_l_text, 2);    
+  }
 
   // Sound On/Off
-  tft.setCursor(20, 215);
+  tft.setCursor(10, 285);
   tft.println("Sound On/Off");
   if (IS_SOUND_ON){
-      DrawButton(5,240,73,30, "ON", btn_d_border, btn_l_border, btn_l_text, 2);
-      DrawButton(83,240,73,30, "OFF", 0, btn_l_border, btn_l_text, 2);
+      DrawButton(5,305,73,30, "ON", btn_d_border, btn_l_border, btn_l_text, 2);
+      DrawButton(83,305,73,30, "OFF", 0, btn_l_border, btn_l_text, 2);
   }else{
-      DrawButton(5,240,73,30, "ON", 0, btn_l_border, btn_l_text, 2);
-      DrawButton(83,240,73,30, "OFF", btn_d_border, btn_l_border, btn_l_text, 2);    
+      DrawButton(5,305,73,30, "ON", 0, btn_l_border, btn_l_text, 2);
+      DrawButton(83,305,73,30, "OFF", btn_d_border, btn_l_border, btn_l_text, 2);    
   }
+
+  // Stepper Motors On/Off
+  tft.setCursor(10, 345);
+  tft.println("Stepper Motors");
+  if (IS_STEPPERS_ON){
+      DrawButton(5,365,73,30, "ON", btn_d_border, btn_l_border, btn_l_text, 2);
+      DrawButton(83,365,73,30, "OFF", 0, btn_l_border, btn_l_text, 2);
+  }else{
+      DrawButton(5,365,73,30, "ON", 0, btn_l_border, btn_l_text, 2);
+      DrawButton(83,365,73,30, "OFF", btn_d_border, btn_l_border, btn_l_text, 2);    
+  }
+
+
 }
 
 void drawSTATScreen(){
@@ -604,7 +659,7 @@ void drawStarMap(){
   }
   PIC_StarMap += String(map_r) + "-" + String(map_c) + ".bmp";
   StarMaps = SD.open(PIC_StarMap);
-  drawPic(&StarMaps, 0, 40);
+  drawPic(&StarMaps, 0, 40, 240, 360);
   StarMaps.close();
   if (!IS_CUSTOM_MAP_SELECTED){
     tft.drawCircle(telescope_X, telescope_Y, 7, RED);
@@ -800,7 +855,7 @@ void OnScreenMsg(int Msg){
 
 void considerDayNightMode(){
   boolean prev_night_mode = IS_NIGHTMODE;
-          if (analogRead(A3) < 800){
+          if (analogRead(A6) < 800){
               IS_NIGHTMODE = true;
           } else {
               IS_NIGHTMODE = false;
@@ -849,6 +904,8 @@ void considerDayNightMode(){
                 drawCoordinatesScreen();
            }else if (CURRENT_SCREEN == 6){
                 drawLoadScreen();
+           }else if (CURRENT_SCREEN == 7){
+                drawOptionsScreen();
            }else if (CURRENT_SCREEN == 10){
                 drawSTATScreen();
            }else if (CURRENT_SCREEN == 12){

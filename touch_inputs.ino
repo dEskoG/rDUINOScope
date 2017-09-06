@@ -27,7 +27,7 @@
 //    * CURRENT_SCREEN==4  - drawMainScreen() Captures all clicks on the MAIN Screen of the application
 //    * CURRENT_SCREEN==5  - drawCoordinatesScreen() Only have "back" button
 //    * CURRENT_SCREEN==6  - drawLoadScreen() Captures input on Load screen (all of them: Messier && Treasurres)
-//    * CURRENT_SCREEN==7  -                - not used
+//    * CURRENT_SCREEN==7  - drawOptionsScreen();           
 //    * CURRENT_SCREEN==8  -                - not used
 //    * CURRENT_SCREEN==9  -                - not used
 //    * CURRENT_SCREEN==10  - drawSTATScreen()
@@ -46,6 +46,16 @@ void considerTouchInput(int lx, int ly){
   //      - only executed when the user touches the screen - PRESS
   //**************************************************************
   if (lx > 0 && ly > 0 ){
+    // Make sure you WakeUp the TFT
+    // in case the lid is OFF
+    if (IS_TFT_ON == false){
+      analogWrite(TFTBright, TFT_Brightness);
+      IS_TFT_ON = true;
+      TFT_Timer = millis();
+      delay(200);
+      return;
+    }
+    TFT_Timer = millis();
     if (CURRENT_SCREEN == 0){   // captures touches on drawGPSScreen()
       if (lx > 46 && lx < 192 && ly > 317 && ly < 371){
         last_button = 1;
@@ -379,39 +389,101 @@ void considerTouchInput(int lx, int ly){
        // BTN <Back pressed
          drawMainScreen();
         }
-       if (lx > 5 && lx < 79 && ly > 70 && ly < 100){
+       if (lx > 5 && lx < 79 && ly > 65 && ly < 95){
        // Celestial Tracking Selected
          Tracking_type = 1;
          drawOptionsScreen();
         }
-       if (lx > 83 && lx < 156 && ly > 70 && ly < 100){
+       if (lx > 83 && lx < 156 && ly > 65 && ly < 95){
        // Lunar Tracking Selected
          Tracking_type = 0;
          drawOptionsScreen();
         }
-       if (lx > 161 && lx < 234 && ly > 70 && ly < 100){
+       if (lx > 161 && lx < 234 && ly > 65 && ly < 95){
        // Solar Tracking Selected
          Tracking_type = 2;
          drawOptionsScreen();
         }
-       if (lx > 5 && lx < 78 && ly > 155 && ly < 185){
+
+      
+       if (lx > 200 && lx < 235 && ly > 125 && ly < 155){
+       // Screen MAX Brightness
+          analogWrite(TFTBright, 255);
+        }
+       if (lx > 5 && lx < 198 && ly > 125 && ly < 155){
+       // Screen REDUCE Brightness
+          TFT_Brightness = 190 +((lx - 5)*0.33);
+          analogWrite(TFTBright, TFT_Brightness);
+          //Serial.println(BRIGHTNESS);
+        }
+
+
+       if (lx > 5 && lx < 45 && ly > 185 && ly < 215){
+       // ECO Mode - Timeout in seconds
+          TFT_timeout = 0;
+          drawOptionsScreen();
+        }
+       if (lx > 48 && lx < 83 && ly > 185 && ly < 215){
+       // ECO Mode - Timeout in seconds
+          TFT_timeout = 30000;
+          drawOptionsScreen();
+        }
+       if (lx > 86 && lx < 121 && ly > 185 && ly < 215){
+       // ECO Mode - Timeout in seconds
+          TFT_timeout = 60000;
+          drawOptionsScreen();
+        }
+       if (lx > 124 && lx < 159 && ly > 185 && ly < 215){
+       // ECO Mode - Timeout in seconds
+          TFT_timeout = 120000;
+          drawOptionsScreen();
+        }
+       if (lx > 162 && lx < 197 && ly > 185 && ly < 215){
+       // ECO Mode - Timeout in seconds
+          TFT_timeout = 300000;
+          drawOptionsScreen();
+        }
+       if (lx > 200 && lx < 235 && ly > 185 && ly < 215){
+       // ECO Mode - Timeout in seconds
+          TFT_timeout = 600000;
+          drawOptionsScreen();
+        }
+
+
+       if (lx > 5 && lx < 78 && ly > 245 && ly < 275){
        // ON Meridian Flip
          IS_MERIDIAN_FLIP_AUTOMATIC = true;
          drawOptionsScreen();
         }
-       if (lx > 83 && lx < 156 && ly > 155 && ly < 185){
+       if (lx > 83 && lx < 156 && ly > 245 && ly < 275){
        // OFF Meridian Flip
          IS_MERIDIAN_FLIP_AUTOMATIC = false;
          drawOptionsScreen();
         }
-       if (lx > 5 && lx < 78 && ly > 240 && ly < 270){
+
+       
+       if (lx > 5 && lx < 78 && ly > 305 && ly < 335){
        // ON Sound
          IS_SOUND_ON = true;
          drawOptionsScreen();
         }
-       if (lx > 83 && lx < 156 && ly > 240 && ly < 270){
+       if (lx > 83 && lx < 156 && ly > 305 && ly < 335){
        // OFF Sound
          IS_SOUND_ON = false;
+         drawOptionsScreen();
+        }
+
+
+       if (lx > 5 && lx < 78 && ly > 365 && ly < 395){
+       // ON Stepper Motors
+         IS_STEPPERS_ON = true;
+         digitalWrite(POWER_DRV8825, HIGH);
+         drawOptionsScreen();
+        }
+       if (lx > 83 && lx < 156 && ly > 365 && ly < 395){
+       // OFF Stepper Motors
+         IS_STEPPERS_ON = false;
+         digitalWrite(POWER_DRV8825, LOW);
          drawOptionsScreen();
         }
         
@@ -462,16 +534,14 @@ void considerTouchInput(int lx, int ly){
             drawStarMap();
           }
         }
-    }else if (CURRENT_SCREEN == 12){    // captures touches on drawStarSyncScreen()
+    }else if (CURRENT_SCREEN == 12){    // captures touches on drawStarSyncScreen() - Alignment Procedure to Check which STAR is selected !
        if (lx > 181 && lx < 238 && ly > 5 && ly < 35){
        // BTN SKIP pressed
          IS_IN_OPERATION = true;
          drawMainScreen();
        }
        int do_kolko = 0;
-       if (ALLIGN_TYPE == 3){
-        // Chage the 4 to represent the real count of screens.
-        // They need to be dynamically calculated... not fixed     
+       if (ALLIGN_TYPE == 3){   
           do_kolko = int_star_count;
        }else{
           do_kolko = 14;
@@ -583,7 +653,7 @@ void considerTouchInput(int lx, int ly){
               }
            }             
        }
-    }else if (CURRENT_SCREEN==13){    // captures touches on drawConstelationScreen(int indx)
+    }else if (CURRENT_SCREEN==13){    // captures touches on drawConstelationScreen(int indx) -- DO THE ALIGNMENT ACTIVITIES (SYNC and NEXT STEP in Alignment)
        if (lx > 5 && lx < 105 && ly > 360 && ly < 400){
           // BTN "<Repeat" or "<EXIT" pressed
           if (ALLIGN_TYPE == 3){
@@ -599,7 +669,7 @@ void considerTouchInput(int lx, int ly){
           }
        }
        if (lx > 128 && lx < 240 && ly > 360 && ly < 400){
-          // BTN "ALIGN!" pressed
+          // BTN "ALIGN!" or "SYNC" pressed
           // Here we need to know which Star is this - 1st, 2nd, 3rd... etc ?
           // In order to use Ralph Pass alignment procedure described on http://rppass.com/  
           // http://rppass.com/align.pdf - the actual PDF
@@ -611,7 +681,13 @@ void considerTouchInput(int lx, int ly){
                 drawMainScreen();
               }else if (ALLIGN_TYPE == 3){
                 // Select Polaris and SlewTo...                
-                IS_TRACKING = false;                
+                IS_TRACKING = false;         
+                //
+                //
+                // NOW I have to SYNC on that STAR!
+                // Assign Values calculated for 
+                // SLEW_RA_microsteps and SLEW_DEC_microsteps
+                //       
                 selectOBJECT_M(192,2);  // Polaris in on Index 192 in the Stars Array
                 calculateLST_HA();
                 OnScreenMsg(1);
@@ -679,12 +755,17 @@ void considerTouchInput(int lx, int ly){
           // Set the earth rotation direction depending on the Hemisphere...
           // HIGH and LOW are substituted 
           if (OBSERVATION_LATTITUDE > 0){
-            STP_FWD = HIGH;
-            STP_BACK = LOW;
-          }else{
             STP_FWD = LOW;
             STP_BACK = HIGH;
+          }else{
+            STP_FWD = HIGH;
+            STP_BACK = LOW;
           }
+          Serial.println(OBSERVATION_LATTITUDE);
+          Serial.print("STP_FWD = ");
+          Serial.println(STP_FWD);
+          Serial.print("STP_BACK = ");
+          Serial.println(STP_BACK);          
           CURRENT_SCREEN = 1;
           drawClockScreen();
       }

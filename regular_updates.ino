@@ -187,19 +187,24 @@ void considerTimeUpdates(){   // UPDATEs time on Screen1 && Screen4 -  Clock Scr
           smartDelay(1000);
         }
 
-        if ((GPS_iterrations > 2) && (gps.location.lng() !=0)){
+        if ((GPS_iterrations > 2) && (gps.location.lat() != 0)){
           OBSERVATION_LONGITUDE = gps.location.lng();
           OBSERVATION_LATTITUDE = gps.location.lat();
           OBSERVATION_ALTITUDE = gps.altitude.meters();
           // Set the earth rotation direction depending on the Hemisphere...
           // HIGH and LOW are substituted 
-          if (OBSERVATION_LONGITUDE > 0){
-            STP_FWD = HIGH;
-            STP_BACK = LOW;
-          }else{
+          if (OBSERVATION_LATTITUDE > 0){
             STP_FWD = LOW;
             STP_BACK = HIGH;
+          }else{
+            STP_FWD = HIGH;
+            STP_BACK = LOW;
           }
+          Serial.println(OBSERVATION_LATTITUDE);
+          Serial.print("STP_FWD = ");
+          Serial.println(STP_FWD);
+          Serial.print("STP_BACK = ");
+          Serial.println(STP_BACK);
           if (IS_SOUND_ON){
             SoundOn(note_C,32);
           }
@@ -233,9 +238,11 @@ void considerTimeUpdates(){   // UPDATEs time on Screen1 && Screen4 -  Clock Scr
             delta_a_DEC = (double(DEC_microSteps) - double(SLEW_DEC_microsteps))/double(DEC_D_CONST);
           
             tft.print("delta_RA: ");
-            tft.println(delta_a_RA, 6);
+            tft.print(delta_a_RA*60, 6);
+            tft.println(" arc min.");
             tft.print("delta_DEC: ");
-            tft.println(delta_a_DEC, 6);
+            tft.println(delta_a_DEC*60, 6);
+            tft.println(" arc min.");
             
         }
         tft.setTextSize(2);           // To make sure that when a button is Pressed, it will be re-drawn sith Size 2 text!

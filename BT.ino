@@ -21,19 +21,91 @@
 //  - Bluetooth communication (both ways);
 //
 void considerBTCommands(){
-  if (IS_SOUND_ON){
-      SoundOn(note_c,8);
-  }
+      if ((BT_COMMAND_STR != ":GR") && (BT_COMMAND_STR != ":GD") && (BT_COMMAND_STR != "")){
+        if (IS_SOUND_ON){
+          SoundOn(note_c,8);
+        }
+        BTs += "\r\n";
+        BTs += rtc.getTimeStr(FORMAT_LONG);
+        BTs += ": ";
+        BTs += BT_COMMAND_STR;
+      }
 
+      if (BT_COMMAND_STR.indexOf("synClock")>0){
+        // :synClock HH:MM:SS:YYYY:M:D:SummerTime#
+        int i = BT_COMMAND_STR.indexOf("synClock");
+        String date_time = BT_COMMAND_STR.substring(i+9,BT_COMMAND_STR.length());
+        int k0 = date_time.indexOf(":");
+        int k1 = date_time.indexOf(":", k0+1);
+        int k2 = date_time.indexOf(":", k1+1);
+        int hh = date_time.substring(0,k0).toInt();
+        int mm = date_time.substring(k0+1,k1).toInt();
+        int ss = date_time.substring(k1+1,k2).toInt()+1;
+        rtc.setTime(hh,mm,ss);
+        int k3 = date_time.indexOf(":", k2+1);
+        int k4 = date_time.indexOf(":", k3+1);
+        int k5 = date_time.indexOf(":", k4+1);
+        int yy = date_time.substring(k2+1,k3).toInt();
+        int mo = date_time.substring(k3+1,k4).toInt();
+        int dd = date_time.substring(k4+1,k5).toInt();
+        Summer_Time = date_time.substring(k5+1,date_time.length()).toInt();
+        rtc.setDate(dd,mo,yy);
+
+        Serial3.print("synClock: ");
+        Serial3.print(rtc.getTimeStr(FORMAT_LONG));
+        Serial3.print(" ");
+        Serial3.print(rtc.getDateStr(FORMAT_LITTLEENDIAN));
+        Serial3.print(" summer_time=");
+        Serial3.print(Summer_Time);
+        Serial3.println(" .....(OK)");
+
+        BT_COMMAND_STR = "";
+      }
+      if (BT_COMMAND_STR.indexOf("synGPS")>0){
+        // :synGPS LAT:LONG:ALT:TZ# (TZ = time zone)
+        int i = BT_COMMAND_STR.indexOf("synGPS");
+        String gps_str = BT_COMMAND_STR.substring(i+7,BT_COMMAND_STR.length());
+        int k0 = gps_str.indexOf(":");
+        int k1 = gps_str.indexOf(":", k0+1);
+        int k2 = gps_str.indexOf(":", k1+1);
+        OBSERVATION_LATTITUDE = gps_str.substring(0,k0).toFloat();
+        OBSERVATION_LONGITUDE = gps_str.substring(k0+1,k1).toFloat();
+        OBSERVATION_ALTITUDE = gps_str.substring(k1+1,k2).toFloat();
+        TIME_ZONE = gps_str.substring(k2+1,gps_str.length()).toInt();
+        Serial3.print("synGPS: ");
+        Serial3.print(OBSERVATION_LATTITUDE, 6);
+        Serial3.print(" | ");
+        Serial3.print(OBSERVATION_LONGITUDE, 6);
+        Serial3.print(" | ");
+        Serial3.print(OBSERVATION_ALTITUDE, 2);
+        Serial3.println(" .....(OK)");
+        BT_COMMAND_STR = "";
+      }
+      if (BT_COMMAND_STR.indexOf("gotoHome")>0){
+         IS_TRACKING = false;
+         Timer3.stop();
+         OBJECT_NAME = "CP";
+         OBJECT_DESCR = "Celestial pole";
+         OBJECT_RA_H = 12;
+         OBJECT_RA_M = 0;       
+         OBJECT_DEC_D = 90;
+         OBJECT_DEC_M = 0;
+         IS_OBJ_FOUND = false;
+         IS_OBJECT_RA_FOUND = false;
+         IS_OBJECT_DEC_FOUND = false;
+         Slew_timer = millis();
+         Slew_RA_timer = Slew_timer + 20000;   // Give 20 sec. advance to the DEC. We will revise later.
+         OBJECT_DETAILS="The north and south celestial poles are the two imaginary points in the sky where the Earth's axis of rotation, intersects the celestial sphere";
+      }
       if (BT_COMMAND_STR=="RD_priv"){
         Current_RA_DEC();
-        Serial3.print("Hour Angle: ");
+        Serial3.print("Right Ascension: ");
         Serial3.println(curr_RA_lz);
         Serial3.print("Declination: ");
         Serial3.print(curr_DEC_lz);
         BT_COMMAND_STR = "";
       }
-      // :AP#
+      // :AP# - Start Tracking
       if (BT_COMMAND_STR == ":AP"){
         if (IS_TRACKING == false){
           IS_TRACKING = true;
@@ -48,7 +120,7 @@ void considerBTCommands(){
         }
         BT_COMMAND_STR = "";
       }  
-      // :AL#     
+      // :AL#  - Stop Tracking    
       if (BT_COMMAND_STR==":AL"){
         if (IS_TRACKING == true){
           IS_TRACKING = false;
@@ -57,24 +129,45 @@ void considerBTCommands(){
         }
         BT_COMMAND_STR = "";
       }       
+      // :CM# or :CMR# - Sync with selected Object    
+      if ((BT_COMMAND_STR==":CM")||(BT_COMMAND_STR==":CMR")){
+       float HAHh;
+       float HAMm;
+       float HA_deci;
+       
+       if (HAHour >= 12){
+          HAHh = HAHour - 12;
+       }else{
+          HAHh = HAHour;
+       }
+
+       HAMm = HAMin;
+       HA_deci = (HAHh+(HAMm/60))*15;   // In degrees - decimal
+
+       delta_a_RA = (double(RA_microSteps) - double(HA_deci * HA_H_CONST))/double(HA_H_CONST);
+       delta_a_DEC = (double(DEC_microSteps) - double(SLEW_DEC_microsteps))/double(DEC_D_CONST);
+
+        Serial3.print("Coordinates  matched #");
+        BT_COMMAND_STR = "";
+      }
+      // :GR#  - Request RA coordinate    
       if (BT_COMMAND_STR==":GR"){
         Current_RA_DEC();
         Serial3.print(curr_RA_lz);
         Serial3.print("#");
         BT_COMMAND_STR = "";
       }
+      // :GD#  - Request DEC coordinate    
       if (BT_COMMAND_STR==":GD"){
         Current_RA_DEC();
         Serial3.print(curr_DEC_lz);
         Serial3.print("#");
         BT_COMMAND_STR = "";
       }
-     // :Sr 07:08:52#
+     // :Sr 07:08:52# - Set Target RA
       if (BT_COMMAND_STR.indexOf("Sr")>0){
         // LX200 - RA Coordinates ()
         
-        BTs += BT_COMMAND_STR + "\r\n";
-
         int i = BT_COMMAND_STR.indexOf("Sr");
         String _RA = BT_COMMAND_STR.substring(i+2,BT_COMMAND_STR.length()-1);
         int k0 = _RA.indexOf(":");
@@ -90,11 +183,9 @@ void considerBTCommands(){
         OBJECT_RA_M = _RA.substring(k0 + 1,k1).toFloat() + RAse / 60;
         Serial3.print("1");
       }
-     // :Sd +18Я12:30#
+     // :Sd +18Я12:30#  - Set Target DEC
       if (BT_COMMAND_STR.indexOf("Sd")>0){
         // LX200 - DEC Coordinates ()
-
-        BTs += BT_COMMAND_STR + "\r\n";
 
         int i = BT_COMMAND_STR.indexOf("Sd");
         String _DEC = BT_COMMAND_STR.substring(i+2,BT_COMMAND_STR.length()-1);
@@ -119,7 +210,7 @@ void considerBTCommands(){
         }
         Serial3.print("1");
       }
-      // :MS#
+      // :MS#  -- Slew To Target RA and DEC
       if (BT_COMMAND_STR==":MS"){
            // LX200 - Slew To (previously sent coordinates with Sr & Sd)
 
@@ -158,17 +249,63 @@ void considerBTCommands(){
       if (BT_COMMAND_STR=="Current"){
             Serial3.println("MECHANICS DATA (Software Defined):");
             Serial3.println("==================================");
+            Serial3.print("Firmware Version: ");
+            Serial3.println(FirmwareName + " " + FirmwareNumber);
+
+            Serial3.print("WORM GEAR Tooths = ");
+            Serial3.println(WORM);
+            Serial3.print("REDUCTOR = 1:");
+            Serial3.println(REDUCTOR);
+            Serial3.print("MOTOR STEPS / REV = ");
+            Serial3.println(DRIVE_STP);
+            Serial3.print("MICROSteps Mode: ");
+            Serial3.println(MICROSteps);
+            
+            Serial3.println("\r\nCALCULATED VALUES IN THE SOFTWARE:");
             Serial3.print("MicroSteps for 360 rotation = ");
             Serial3.println(MicroSteps_360);
-            Serial3.print("RA_90 = DEC_90 = ");
+            Serial3.print("RA_90 = ");
             Serial3.println(RA_90);
-            Serial3.print("RA_D_CONST = DEC_D_CONST = ");
+            Serial3.print("DEC_90 = ");
+            Serial3.println(DEC_90);
+            Serial3.print("RA_H_CONST = ");
+            Serial3.println(HA_H_CONST);
+            Serial3.print("DEC_D_CONST = ");
             Serial3.println(DEC_D_CONST);
-            Serial3.print("Clock_Motor (microSec) = ");
-            Serial3.println(Clock_Sidereal);
-            Serial3.print("Meridian Flip (time) = ");
-            Serial3.println(mer_flp);
-            Serial3.println("\r\nOBJECT DATA (Selected):");
+            Serial3.print("RA Clock Motor (Micro Seconds) = ");
+            Serial3.print(Clock_Sidereal);
+            Serial3.print(" (");
+            Serial3.print(1000000/Clock_Sidereal);
+            Serial3.println(" MicroSteps / Second )");
+            Serial3.print("Time to Meridian Flip = ");
+            Serial3.print(mer_flp);
+            Serial3.println(" hours");
+            Serial3.println("\r\nCURRENT TELESCOPE POSITION COUNTER:");
+            Serial3.print("RA_microSteps: ");
+            Serial3.println(RA_microSteps);
+            Serial3.print("DEC_microSteps: ");
+            Serial3.println(DEC_microSteps);
+            Serial3.print("delta_a_RA: ");
+            Serial3.println(delta_a_RA);
+            Serial3.print("delta_a_DEC: ");
+            Serial3.println(delta_a_DEC);
+            Serial3.println("\r\nCURRENT GPS POSITION & DATE:");
+            Serial3.print("OBSERVATION LONGITUDE: ");
+            Serial3.println(OBSERVATION_LONGITUDE, 6);
+            Serial3.print("OBSERVATION LATTITUDE: ");
+            Serial3.println(OBSERVATION_LATTITUDE, 6);
+            Serial3.print("OBSERVATION ALTITUDE: ");
+            Serial3.println(OBSERVATION_ALTITUDE, 6);
+            Serial3.print("TIME ZONE: ");
+            Serial3.println(TIME_ZONE);
+            Serial3.print("Mount Date: ");
+            Serial3.println(String(rtc.getDateStr()).substring(0,2)+" "+rtc.getMonthStr(FORMAT_SHORT)+" "+String(rtc.getDateStr()).substring(6));
+            Serial3.print("Mount Time: ");
+            Serial3.println(String(rtc.getTimeStr()).substring(0,5));
+            Serial3.print("Summer Time: ");
+            Serial3.println(Summer_Time);
+            
+            Serial3.println("\r\nOBJECT DATA (Selected Object):");
             Serial3.println("==================================");
             Serial3.print("IS_OBJ_FOUND = ");
             Serial3.println(IS_OBJ_FOUND);
@@ -179,32 +316,22 @@ void considerBTCommands(){
             Serial3.print("h ");
             Serial3.print(OBJECT_RA_M);
             Serial3.println("m");
-            Serial3.print("HA = ");
-            Serial3.print(HAHour,0);
-            Serial3.print("h ");
-            Serial3.print(HAMin);
-            Serial3.println("m");
             Serial3.print("DEC = ");
             Serial3.print(OBJECT_DEC_D,0);
             Serial3.print("* ");
             Serial3.print(OBJECT_DEC_M);
             Serial3.println("m");
+            Serial3.print("HA = ");
+            Serial3.print(HAHour,0);
+            Serial3.print("h ");
+            Serial3.print(HAMin);
+            Serial3.println("m");
             Serial3.print("ALT = ");
             Serial3.println(ALT,2);
             Serial3.print("AZ = ");
             Serial3.println(AZ,2);
-            Serial3.print("RA_microSteps: ");
-            Serial3.println(RA_microSteps);
-            Serial3.print("DEC_microSteps: ");
-            Serial3.println(DEC_microSteps);
-            Serial3.print("delta_a_RA: ");
-            Serial3.println(delta_a_RA);
-            Serial3.print("delta_a_DEC: ");
-            Serial3.println(delta_a_DEC);
             Serial3.println("\r\nVARIABLE DATA (Software):");
             Serial3.println("==================================");
-            Serial3.print("Firmware Version: ");
-            Serial3.println(FirmwareName + " " + FirmwareNumber);
             Serial3.print("IS_OBJ_VISIBLE: ");
             Serial3.println(IS_OBJ_VISIBLE);
             Serial3.print("IS_IN_OPERATION: ");
