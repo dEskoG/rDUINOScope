@@ -526,7 +526,6 @@ void setup(void) {
 
   tft.begin();
   tft.fillScreen(BLACK);
-  tft.setCursor(15, 10);
 
   // DRB8825 - drive mode pins (determine Steppping Modes 1/8, 1/16 and etc.
   pinMode(RA_MODE0, OUTPUT); 
@@ -601,9 +600,10 @@ void setup(void) {
   // Draw initial screen - INITIALIZE
   // The below part cannot be removed form the code
   // You can add messages, but not remove!
+  tft.setCursor(20, 10);
   tft.setTextColor(title_bg);    
   tft.setTextSize(3);
-  tft.println("rDUINO Scope");
+  tft.println("rDUINOScope");
   tft.setTextColor(l_text);    
   tft.setTextSize(2);
   tft.setCursor(20, 35);
@@ -631,11 +631,15 @@ void setup(void) {
   // Draw Supporters Logos
   String PIC_Supporters = "hackad16.bmp";
   StarMaps = SD.open(PIC_Supporters);
-  drawPic(&StarMaps, 0, 308, 80, 92);
+  drawPic(&StarMaps, 0, 375, 120, 24);
   StarMaps.close();
   delay(200);
-  tft.setCursor(5, 300);
-  tft.println("Supported By:");
+  //tft.setCursor(5, 290);
+  //tft.println("FINALIST");
+  tft.setCursor(0, 365);
+  tft.setTextColor(btn_l_text);
+  tft.println("SUPPORTERS:");
+  tft.setTextColor(d_text); 
   tft.setCursor(0, 120);
 
 
