@@ -11,7 +11,7 @@ The best part of rDUINOScope is that it is an OPEN SOURCE SOFTWARE and HARDWARE!
 
 Published under GNU General Public License
 
-Instructions on how to build hardware can be found on the project's website: http://rduinoscope.byethost24.com/
+Instructions on how to build hardware can be found on the project's website: http://www.rduinoscope.tk/
 HACKADAY.IO Project: https://hackaday.io/project/21024-rduinoscope
 
 Facebook: https://www.facebook.com/rDUINOScope/
